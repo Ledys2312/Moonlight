@@ -1,4 +1,4 @@
 package Forms;
 
-public class GameSeleectionScreen {
+public class SelectionScreen {
 }
