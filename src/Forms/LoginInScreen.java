@@ -8,12 +8,13 @@ import java.io.IOException;
 import static java.awt.Font.TRUETYPE_FONT;
 import static java.awt.Font.createFont;
 
-public class LoginInScreen {
+public class LoginInScreen extends JFrame {
 
     private JPanel signInPanel;
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JButton signInButton;
+    private JButton backButton;
 
     public JPanel getSignInPanel() {
         return signInPanel;
@@ -47,16 +48,25 @@ public class LoginInScreen {
         this.signInButton = signInButton;
     }
 
+    public JButton getBackButton() {
+        return backButton;
+    }
+
+    public void setBackButton(JButton backButton) {
+        this.backButton = backButton;
+    }
+
     public LoginInScreen() {
 
-        signInPanel = new JPanel();
+        setTitle("MoonLight");
+        setSize(800,550);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+
+        signInPanel = new JPanel(null);
         usernameField = new JTextField();
         passwordField = new JPasswordField();
-
-        signInPanel.setPreferredSize(new Dimension(800,550));
-        signInPanel.setSize(new Dimension(800,550));
-        signInPanel.setLayout(null);
-
 
         JLabel lblUsername = new JLabel("Write your username");
         lblUsername.setBounds(285, 180, 200, 20);
@@ -67,77 +77,47 @@ public class LoginInScreen {
         passwordField.setBounds(285, 280, 200, 20);
 
         signInButton = new JButton("Sign In");
-        signInButton.setBounds(335, 320, 100, 40);
+        signInButton.setBounds(390, 320, 100, 40);
+
+        backButton = new JButton("Back");
+        backButton.setBounds(280, 320, 100, 40);
 
 
-        signInPanel.add(lblUsername);
-        signInPanel.add(usernameField);
-        signInPanel.add(lblPassword);
-        signInPanel.add(passwordField);
-        signInPanel.add(signInButton);
-    }
-
-    public static void main(String[] args) {
-
-        try {
-            File fontFile = new File("src/Fonts/dogicapixel.ttf");
-
-            Font customFont = createFont(TRUETYPE_FONT, fontFile).deriveFont(10f);  // Tamaño 16
-            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            ge.registerFont(customFont);
-
-            setUIFont(customFont);
-
-        } catch (FontFormatException | IOException e) {
-            e.printStackTrace();
-        }
-
-        JFrame frame = new JFrame("Moonlight");
-        LoginInScreen loginInScreen = new LoginInScreen();
-
-        frame.setContentPane(loginInScreen.getSignInPanel());
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800,550);
-
-        frame.setLocationRelativeTo(null);
-
-        JLabel signInLabel = new JLabel("Sign In");
-
+        JLabel signInLabel = new JLabel("Sign In", SwingConstants.CENTER);
+        signInLabel.setBounds(150, 80, 500, 60);
         try {
             File fontFile = new File("src/Fonts/Rolie Twily.otf");
 
-            Font customFont = Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont(35f);  // Tamaño 24
+            Font customFont = Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont(35f);
 
             signInLabel.setFont(customFont);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        int labelWidth = 550;
-        int labelHeight = 80;
-        int x = (1200 - labelWidth) / 2;
-        int y = 100;
-
-        signInLabel.setBounds(x,y,labelWidth,labelHeight);
-
-        loginInScreen.getSignInPanel().setLayout(null);
-        loginInScreen.getSignInPanel().add(signInLabel);
-
-        frame.setVisible(true);
-
-        Toolkit pantalla = Toolkit.getDefaultToolkit();
-        Image icon = pantalla.getImage("src/Img/Icon.png");
-        frame.setIconImage(icon);
-    }
-
-    public static void setUIFont(Font font) {
-        java.util.Enumeration<Object> keys = UIManager.getDefaults().keys();
-        while (keys.hasMoreElements()) {
-            Object key = keys.nextElement();
-            Object value = UIManager.get(key);
-            if (value instanceof Font) {
-                UIManager.put(key, font);
-            }
+        File fontFile = new File("src/Fonts/dogicapixel.ttf");
+        Font costumn = null;
+        try {
+            costumn = Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont(10f);
+        } catch (FontFormatException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
+        lblUsername.setFont(costumn);
+        lblPassword.setFont(costumn);
+        signInButton.setFont(costumn);
+        backButton.setFont(costumn);
+
+        signInPanel.add(lblUsername);
+        signInPanel.add(usernameField);
+        signInPanel.add(lblPassword);
+        signInPanel.add(passwordField);
+        signInPanel.add(signInButton);
+        signInPanel.add(backButton);
+        signInPanel.add(signInLabel);
+
+        setContentPane(signInPanel);
+
     }
 }

@@ -4,11 +4,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 import static java.awt.Font.TRUETYPE_FONT;
 import static java.awt.Font.createFont;
 
-public class LoginUpScreen {
+public class LoginUpScreen extends JFrame {
 
     private JPanel signUpPanel;
     private JTextField nameField;
@@ -16,6 +19,7 @@ public class LoginUpScreen {
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JButton signUpButton;
+    private JButton backButton;
 
     public JPanel getSignUpPanel() {
         return signUpPanel;
@@ -65,18 +69,27 @@ public class LoginUpScreen {
         this.signUpButton = signUpButton;
     }
 
+    public JButton getBackButton() {
+        return backButton;
+    }
+
+    public void setBackButton(JButton backButton) {
+        this.backButton = backButton;
+    }
+
     public LoginUpScreen() {
 
-        signUpPanel = new JPanel();
+        setTitle("MoonLight");
+        setSize(800,550);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        signUpPanel = new JPanel(null);
         nameField = new JTextField();
         surnameField = new JTextField();
         usernameField = new JTextField();
         passwordField = new JPasswordField();
-        signUpButton = new JButton("Sign Up");
 
-        signUpPanel.setPreferredSize(new Dimension(800,550));
-        signUpPanel.setSize(new Dimension(800,550));
-        signUpPanel.setLayout(null);
 
         JLabel lblName = new JLabel("Name");
         lblName.setBounds(290,200,200,20);
@@ -90,45 +103,13 @@ public class LoginUpScreen {
         JLabel lblPassword = new JLabel("Write your password");
         lblPassword.setBounds(290,380,200,20);
         passwordField.setBounds(290, 410, 200, 20);
-        signUpButton.setBounds(340, 450, 100, 40);
+        signUpButton = new JButton("Sign Up");
+        signUpButton.setBounds(390, 450, 100, 40);
+        backButton = new JButton("Back");
+        backButton.setBounds(280, 450, 100, 40);
 
-
-        signUpPanel.add(lblName);
-        signUpPanel.add(nameField);
-        signUpPanel.add(lblSurname);
-        signUpPanel.add(surnameField);
-        signUpPanel.add(lblUsername);
-        signUpPanel.add(usernameField);
-        signUpPanel.add(lblPassword);
-        signUpPanel.add(passwordField);
-        signUpPanel.add(signUpButton);
-    }
-
-    public static void main(String[] args) {
-
-        try {
-            File fontFile = new File("src/Fonts/dogicapixel.ttf");
-
-            Font customFont = createFont(TRUETYPE_FONT, fontFile).deriveFont(10f);  // Tamaño 16
-            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            ge.registerFont(customFont);
-
-            setUIFont(customFont);
-
-        } catch (FontFormatException | IOException e) {
-            e.printStackTrace();
-        }
-
-        JFrame frame = new JFrame("Moonlight");
-        LoginUpScreen loginupScreen = new LoginUpScreen();
-
-        frame.setContentPane(loginupScreen.getSignUpPanel());
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800,550);
-
-        frame.setLocationRelativeTo(null);
-
-        JLabel signUpLabel = new JLabel("Sign Up");
+        JLabel signUpLabel = new JLabel("Sign Up", SwingConstants.CENTER);
+        signUpLabel.setBounds(150,80,500,60);
 
         try {
             File fontFile = new File("src/Fonts/Rolie Twily.otf");
@@ -140,31 +121,41 @@ public class LoginUpScreen {
             e.printStackTrace();
         }
 
-        int labelWidth = 550;
-        int labelHeight = 80;
-        int x = (1200 - labelWidth) / 2;
-        int y = 120;
+        File fontFile = new File("src/Fonts/dogicapixel.ttf");
+        Font costumn = null;
+        try {
+            costumn = Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont(10f);
+        } catch (FontFormatException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
 
-        signUpLabel.setBounds(x,y,labelWidth,labelHeight);
+        lblName.setFont(costumn);
+        lblSurname .setFont(costumn);
+        lblUsername.setFont(costumn);
+        lblPassword.setFont(costumn);
+        signUpButton.setFont(costumn);
+        backButton.setFont(costumn);
 
-        loginupScreen.getSignUpPanel().setLayout(null);
-        loginupScreen.getSignUpPanel().add(signUpLabel);
+        signUpPanel.add(lblName);
+        signUpPanel.add(nameField);
+        signUpPanel.add(lblSurname);
+        signUpPanel.add(surnameField);
+        signUpPanel.add(lblUsername);
+        signUpPanel.add(usernameField);
+        signUpPanel.add(lblPassword);
+        signUpPanel.add(passwordField);
+        signUpPanel.add(signUpButton);
+        signUpPanel.add(backButton);
+        signUpPanel.add(signUpLabel);
 
-        frame.setVisible(true);
+        setContentPane(signUpPanel);
 
         Toolkit pantalla = Toolkit.getDefaultToolkit();
         Image icon = pantalla.getImage("src/Img/Icon.png");
-        frame.setIconImage(icon);
+        setIconImage(icon);
     }
 
-    public static void setUIFont(Font font) {
-        java.util.Enumeration<Object> keys = UIManager.getDefaults().keys();
-        while (keys.hasMoreElements()) {
-            Object key = keys.nextElement();
-            Object value = UIManager.get(key);
-            if (value instanceof Font) {
-                UIManager.put(key, font);
-            }
-        }
-    }
+
 }

@@ -6,10 +6,10 @@ import java.sql.SQLException;
 
 public class ConnectionManager {
 
-    private static String url = "jdbc:mysql://localhost:3306/MoonLight";
+    private static String url = "jdbc:mysql://localhost:3306/moonlight";
     private static String driver = "com.mysql.cj.jdbc.Driver";
     private static String user = "root";
-    private static String password = "";
+    private static String password = "mysql";
 
     // Singleton Connection object (https://en.wikipedia.org/wiki/Singleton_pattern)
     private static Connection connection = null;
