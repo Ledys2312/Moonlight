@@ -11,7 +11,6 @@ import static java.awt.Font.*;
 
 public class LoginScreen {
 
-    private JFrame frame;
     private JPanel loginPanel;
     private JButton loginInButton;
     private JButton loginUpButton;
@@ -40,11 +39,10 @@ public class LoginScreen {
         this.loginUpButton = loginUpButton;
     }
 
-    public LoginScreen(JFrame frame) {
+    public LoginScreen() {
 
-        this.frame = frame;
 
-        loginPanel = new JPanel();
+        loginPanel = new JPanel(null);
         loginInButton = new JButton("Sign in");
         loginUpButton = new JButton("Sign Up");
 
@@ -57,13 +55,13 @@ public class LoginScreen {
         loginPanel.add(loginInButton);
         loginPanel.add(loginUpButton);
 
-        JLabel welcomeLabel = new JLabel("Welcome to MoonLight", SwingConstants.CENTER);
+        JLabel welcomeLabel = new JLabel("MoonLight", SwingConstants.CENTER);
         welcomeLabel.setBounds(150,100,500,80);
 
         try {
             File fontFile = new File("src/Fonts/Rolie Twily.otf");
 
-            Font customFont = Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont(50f);
+            Font customFont = Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont(45f);
 
             welcomeLabel.setFont(customFont);
         } catch (Exception e) {
@@ -72,5 +70,4 @@ public class LoginScreen {
 
         loginPanel.add(welcomeLabel);
     }
-
 }
