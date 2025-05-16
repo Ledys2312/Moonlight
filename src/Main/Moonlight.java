@@ -37,17 +37,22 @@ public class Moonlight {
         LoginUpScreen loginUpScreen = new LoginUpScreen();
         HomeScreen homeScreen = new HomeScreen();
         SelectionScreen selectionScreen = new SelectionScreen();
-        GameScreen gameScreen = new GameScreen();
+        Maze maze = new Maze();
+        GameScreen gameScreen = new GameScreen(maze);
+        RankingScreen rankingScreen = new RankingScreen();
 
         panelMain.add(loginScreen.getLoginPanel(), "Login");
         panelMain.add(loginInScreen.getSignInPanel(), "Sign In");
         panelMain.add(loginUpScreen.getSignUpPanel(), "Sign Up");
         panelMain.add(homeScreen.getHomePanel(), "Home");
         panelMain.add(selectionScreen.getSelectionPanel(), "Selection");
+        panelMain.add(gameScreen.getGamePanel(), "Game");
+        panelMain.add(rankingScreen.getRankingPanel(), "Ranking");
 
         frame.setContentPane(panelMain);
         frame.setVisible(true);
 
+        //Pantallas de Login
         loginScreen.getLoginInButton().addActionListener(e -> showScreen("Sign In"));
         loginScreen.getLoginUpButton().addActionListener(e -> showScreen("Sign Up"));
         loginInScreen.getBackButton().addActionListener(e -> showScreen("Login"));
@@ -91,23 +96,32 @@ public class Moonlight {
             }
         });
 
+        //Pantallas de inicio del juego
+
         homeScreen.getStartButton().addActionListener(e -> showScreen("Selection"));
         homeScreen.getRankingButton().addActionListener(e -> showScreen("Ranking"));
         homeScreen.getExitButton().addActionListener(e -> {
-            int confirm = JOptionPane.showConfirmDialog(null,
-                    "Are you sure you wanna go?",
+            int confirm = JOptionPane.showConfirmDialog(
+                    null,
+                    "Are you sure you want to exit?",
                     "Confirmation",
                     JOptionPane.YES_NO_OPTION,
-                    JOptionPane.QUESTION_MESSAGE);
+                    JOptionPane.QUESTION_MESSAGE
+            );
 
             if (confirm == JOptionPane.YES_OPTION) {
-                frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-            } else {
-                frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+                System.exit(0);
             }
         });
 
+        //Pantallas de selección de nivel
         selectionScreen.getBackButton().addActionListener(e -> showScreen("Home"));
+        selectionScreen.getLevelEasyButton().addActionListener(e -> showScreen("Game"));
+
+        //Pantallas del ranking
+        rankingScreen.getBackButton().addActionListener(e -> showScreen("Home"));
+
+
 
     }
 
