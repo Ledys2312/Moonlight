@@ -2,65 +2,87 @@ package Forms;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 public class Maze {
 
-     private JPanel mazePanel;
-     private int[][] maze;
-     private int playerX = 1;
-     private int playerY = 1;
-     private final int sizeCell = 40;
-     private final int exitX = 10;
-     private final int exitY = 10;
+    private JPanel mazePanel;
+    private int[][] maze;
+    private int playerX = 1;
+    private int playerY = 1;
+    private final int sizeCell = 40;
+    private final int exitX = 17;
+    private final int exitY = 9;
+    private static GameScreen gameScreen;
+    private Runnable onWin;
+    private int score = 0;
+    private GameScreen gameScreenRef;
+    private ImageIcon[] starImg = new ImageIcon[7];
 
-
-    public Maze(int[][] maze) {
-        this.maze = maze;
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-
-        // Dibujar el laberinto
-        for (int fila = 0; fila < laberinto.length; fila++) {
-            for (int col = 0; col < laberinto[0].length; col++) {
-                if (laberinto[fila][col] == 1) {
-                    g.setColor(Color.BLACK);  // Pared
-                } else {
-                    g.setColor(Color.WHITE);  // Camino
-                }
-                g.fillRect(col * tamañoCelda, fila * tamañoCelda, tamañoCelda, tamañoCelda);
-                g.setColor(Color.GRAY);
-                g.drawRect(col * tamañoCelda, fila * tamañoCelda, tamañoCelda, tamañoCelda);
-            }
-        }
-
-        // Dibujar salida
-        g.setColor(Color.GREEN);
-        g.fillRect(salidaX * tamañoCelda, salidaY * tamañoCelda, tamañoCelda, tamañoCelda);
-
-        // Dibujar jugador
-        g.setColor(Color.RED);
-        g.fillOval(jugadorX * tamañoCelda + 5, jugadorY * tamañoCelda + 5,
-                tamañoCelda - 10, tamañoCelda - 10);
-    }
 
     public Maze() {
 
-        mazePanel = new JPanel(null);
+
+        for (int i = 0; i < 7 ; i++) {
+            starImg[i] = new ImageIcon("src/Img/Star" + (i + 1) +".png");
+        }
+//        0 = Caminos;
+//        1 = Muros;
+//        2 = Estrella +2pts;
+//        3 = Estrella +4pts;
+//        4 = Estrella +6pts;
+//        5 = Luna +8pts;
+//        6 = Luna +10pts;
+//        7 = Luna +12pts;
+//        8 = Fresa +Vida;
+
+        this.maze = new int [][]{
+                {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+                {1,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,4,0,1},
+                {1,1,0,1,0,1,0,1,0,1,0,1,0,1,1,1,1,0,1},
+                {1,0,0,0,0,1,0,3,0,1,0,0,0,1,0,0,1,0,1},
+                {1,0,1,1,1,1,1,1,0,1,1,1,0,1,0,1,1,0,1},
+                {1,2,0,0,0,0,0,1,0,0,0,1,0,1,0,0,7,0,1},
+                {1,1,1,1,1,1,0,1,1,1,6,1,0,1,1,1,1,1,1},
+                {1,0,0,0,0,1,0,0,0,1,0,1,0,0,0,0,0,0,1},
+                {1,0,1,1,0,1,1,1,2,1,0,1,1,1,1,1,1,0,1},
+                {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1},
+        };
+        mazePanel = new JPanel();
+        mazePanel.setFocusable(true);
         mazePanel.setSize(765,430);
-        mazePanel.setBackground(Color.RED);
+        mazePanel.setPreferredSize(new Dimension(maze[0].length * sizeCell, maze.length * sizeCell));
+
+        mazeScreen screen = new mazeScreen();
+        mazePanel.add(screen, BorderLayout.CENTER);
 
         mazePanel.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                mazePanel.moverJugador(e.getKeyCode());
+                movePlayer(e.getKeyCode());
+                screen.repaint();
+
+                if (playerX == exitX && playerY == exitY) {
+                    if (onWin != null) {
+                        onWin.run();
+                    }
+                }
+            }
+        });
+
+        mazePanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                mazePanel.requestFocusInWindow();
+            }
+        });
+
+        mazePanel.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                System.out.println("Maze panel has focus!");
             }
         });
     }
@@ -84,14 +106,80 @@ public class Maze {
                 break;
         }
 
-        if (maze[newX][newY] == 0) {
-            playerX = newX;
-            playerY = newY;
-
-            if (playerX == exitX && playerY == exitY) {
-                JOptionPane.showMessageDialog(this, "¡Felicidades! Has ganado el laberinto.");
+        if (newY >= 0 && newY < maze.length && newX >= 0 && newX < maze[0].length) {
+            if(maze[newY][newX] == 0){
+                playerX = newX;
+                playerY = newY;
             }
         }
+
+        if(maze[newY][newX] >= 2 && maze[newY][newX] <= 8){
+            int starType = maze[newY][newX];
+
+            switch (starType) {
+                case 2: score += 2; break;
+                case 3: score += 4; break;
+                case 4: score += 6; break;
+                case 5: score += 8; break;
+                case 6: score += 10; break;
+                case 7: score += 12; break;
+                case 8:
+                    gameScreenRef.gainLife();
+                    break;
+            }
+
+            maze[newY][newX] = 0;
+            if (gameScreenRef != null) {
+                gameScreenRef.updateScore(score);
+            }
+        }
+    }
+
+    private class mazeScreen extends JPanel {
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+
+            for (int y = 0; y < maze.length; y++) {
+                for (int x = 0; x < maze[y].length; x++) {
+                    if (maze[y][x] == 1) {
+                        g.setColor(Color.BLACK);
+                    } else {
+                        g.setColor(Color.WHITE);
+                    }
+                    g.fillRect(x * sizeCell, y * sizeCell, sizeCell, sizeCell);
+                    g.setColor(Color.GRAY);
+                    g.drawRect(x * sizeCell, y * sizeCell, sizeCell, sizeCell);
+
+                    if (maze[y][x] >= 2 && maze[y][x] <= 8) {
+                        drawStar(g, x * sizeCell, y * sizeCell, maze[y][x]);
+                    }
+                }
+            }
+
+            g.setColor(Color.RED);
+            g.fillOval(playerX * sizeCell + 5, playerY * sizeCell - 10, sizeCell - 10, sizeCell - 10);
+
+            g.setColor(Color.GREEN);
+            g.fillRect(exitX * sizeCell + 10, exitY * sizeCell + 10, sizeCell - 20, sizeCell - 20);
+        }
+
+        @Override
+        public Dimension getPreferredSize() {
+            return new Dimension(maze[0].length * sizeCell, maze.length * sizeCell);
+        }
+
+    }
+
+    private void drawStar(Graphics g, int x, int y, int type) {
+        Image imgStar = starImg[type -2].getImage();
+        g.drawImage(imgStar, x + 10, y + 10, 20, 20, null);
+    }
+
+    public void resetPosition() {
+        playerX = 1;
+        playerY = 1;
+        mazePanel.repaint();
     }
 
     public JPanel getMazePanel() {
@@ -137,14 +225,15 @@ public class Maze {
     public int getExitY() {
         return exitY;
     }
-}
 
-import javax.swing.*;
-        import java.awt.*;
-        import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.image.BufferedImage;
-import java.awt.geom.AffineTransform;
+    public void setOnWin(Runnable onWin) {
+        this.onWin = onWin;
+    }
+
+    public void setGameScreenRef(GameScreen gameScreenRef) {
+        this.gameScreenRef = gameScreenRef;
+    }
+}
 
 //public class GatitoMoviendose {
 //

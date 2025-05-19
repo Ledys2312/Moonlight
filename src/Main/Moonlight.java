@@ -18,6 +18,9 @@ public class Moonlight {
     private static JFrame frame;
     private static JPanel panelMain;
     private static CardLayout cardLayout;
+    private static GameScreen gameScreen;
+    private static int lives = 3;
+    private static int score = 0;
 
     public static void main(String[] args){
 
@@ -26,6 +29,7 @@ public class Moonlight {
         JFrame frame = new JFrame("MoonLight");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800,550);
+        frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setIconImage(Toolkit.getDefaultToolkit().getImage("src/Img/Icon.png"));
 
@@ -38,7 +42,7 @@ public class Moonlight {
         HomeScreen homeScreen = new HomeScreen();
         SelectionScreen selectionScreen = new SelectionScreen();
         Maze maze = new Maze();
-        GameScreen gameScreen = new GameScreen(maze);
+        gameScreen = new GameScreen(maze);
         RankingScreen rankingScreen = new RankingScreen();
 
         panelMain.add(loginScreen.getLoginPanel(), "Login");
@@ -116,13 +120,77 @@ public class Moonlight {
 
         //Pantallas de selección de nivel
         selectionScreen.getBackButton().addActionListener(e -> showScreen("Home"));
-        selectionScreen.getLevelEasyButton().addActionListener(e -> showScreen("Game"));
+        gameScreen.startCountdown(
+                () -> {
+                    // onTimeout
+                    showScreen("Home"); // o lógica de perder una vida
+                },
+                () -> {
+                    // onWin
+                    JOptionPane.showMessageDialog(null, "¡Ganaste el nivel!");
+                    gameScreen.stopCountdown();
+                    showScreen("Selection"); // o pasar al siguiente nivel
+                }
+        );
 
         //Pantallas del ranking
         rankingScreen.getBackButton().addActionListener(e -> showScreen("Home"));
 
+        //Pantallas de Juego
+        gameScreen.getBackButton().addActionListener(e -> showScreen("Selection"));
+        selectionScreen.getLevelEasyButton().addActionListener(e -> {
+            maze.resetPosition();
+            lives = 3; // reset al iniciar nivel
+            startLevel();
+        });
+    }
 
+    public static void startLevel() {
+        new InstrucctionsWindow(() -> {
+            showScreen("Game");
 
+            SwingUtilities.invokeLater(() -> {
+                Component gameComponent = panelMain.getComponent(5);
+                if (gameComponent instanceof JPanel) {
+                    for (Component c : ((JPanel) gameComponent).getComponents()) {
+                        if (c instanceof JPanel && c.isFocusable()) {
+                            c.requestFocusInWindow();
+                            break;
+                        }
+                    }
+                }
+
+                gameScreen.startCountdown(() -> {
+                    // onTimeout
+                    lives--;
+                    score -= 2;
+                    if (score < 0 ) {
+                        score = 0;
+                    }
+
+                    gameScreen.updateLives(lives);
+                    gameScreen.updateScore(score);
+
+                    if (lives > 0) {
+                        JOptionPane.showMessageDialog(null, "¡Perdiste una vida! Vidas restantes: " + lives);
+                        startLevel(); // reinicia nivel
+                    } else {
+                        JOptionPane.showMessageDialog(null, "¡Game Over! Te has quedado sin vidas.");
+                        showScreen("Home");
+                        lives = 3;
+                        score = 0;
+
+                        gameScreen.updateLives(lives);
+                        gameScreen.updateScore(score);
+                    }
+                }, () -> {
+                    // onWin
+                    JOptionPane.showMessageDialog(null, "¡Ganaste el nivel!");
+                    gameScreen.stopCountdown();
+                    showScreen("Selection"); // o avanzar a otro nivel
+                });
+            });
+        });
     }
 
     public static void showScreen(String title){
@@ -150,6 +218,5 @@ public class Moonlight {
         } catch (FontFormatException | IOException e) {
             e.printStackTrace();
         }
-
     }
 }
