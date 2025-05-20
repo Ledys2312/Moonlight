@@ -8,8 +8,6 @@ import Objects.User;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
@@ -26,13 +24,13 @@ public class Moonlight {
     private static int score = 0;
     private static String difficulty = "Easy";
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
 
         setUIFont();
 
-        JFrame frame = new JFrame("MoonLight");
+        frame = new JFrame("MoonLight");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800,550);
+        frame.setSize(800, 550);
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setIconImage(Toolkit.getDefaultToolkit().getImage("src/Img/Icon.png"));
@@ -45,8 +43,6 @@ public class Moonlight {
         LoginUpScreen loginUpScreen = new LoginUpScreen();
         HomeScreen homeScreen = new HomeScreen();
         SelectionScreen selectionScreen = new SelectionScreen();
-        Maze maze = new Maze();
-        gameScreen = new GameScreen(maze);
         RankingScreen rankingScreen = new RankingScreen();
 
         panelMain.add(loginScreen.getLoginPanel(), "Login");
@@ -54,13 +50,12 @@ public class Moonlight {
         panelMain.add(loginUpScreen.getSignUpPanel(), "Sign Up");
         panelMain.add(homeScreen.getHomePanel(), "Home");
         panelMain.add(selectionScreen.getSelectionPanel(), "Selection");
-        panelMain.add(gameScreen.getGamePanel(), "Game");
         panelMain.add(rankingScreen.getRankingPanel(), "Ranking");
 
         frame.setContentPane(panelMain);
         frame.setVisible(true);
 
-        //Pantallas de Login
+        // Login
         loginScreen.getLoginInButton().addActionListener(e -> showScreen("Sign In"));
         loginScreen.getLoginUpButton().addActionListener(e -> showScreen("Sign Up"));
         loginInScreen.getBackButton().addActionListener(e -> showScreen("Login"));
@@ -79,10 +74,10 @@ public class Moonlight {
 
             boolean success = LoginConnection.registerUser(name, surname, username, password);
             if (success) {
-                JOptionPane.showMessageDialog(null, "Welcome " + name + " to MoonLight. ");
+                JOptionPane.showMessageDialog(null, "Welcome " + name + " to MoonLight.");
                 showScreen("Home");
             } else {
-                JOptionPane.showMessageDialog(null, "Something went wrong. ");
+                JOptionPane.showMessageDialog(null, "Something went wrong.");
             }
         });
 
@@ -98,16 +93,28 @@ public class Moonlight {
             User authenticatedUser = LoginConnection.authenticateUser(username, password);
             if (authenticatedUser != null) {
                 SessionManager.setCurrentUser(authenticatedUser);
-                JOptionPane.showMessageDialog(null, "Welcome again " + username + " to MoonLight. ");
+                JOptionPane.showMessageDialog(null, "Welcome again " + authenticatedUser.getUsername() + " to MoonLight.");
+
+                Maze maze = new Maze();
+                gameScreen = new GameScreen(maze);
+                panelMain.add(gameScreen.getGamePanel(), "Game");
+
+                // Acciones de botones que necesitan gameScreen ya creado
+                gameScreen.getBackButton().addActionListener(ev -> showScreen("Selection"));
+                selectionScreen.getLevelEasyButton().addActionListener(ev -> {
+                    difficulty = "Easy";
+                    maze.resetPosition();
+                    lives = 3;
+                    startLevel();
+                });
+
                 showScreen("Home");
             } else {
                 JOptionPane.showMessageDialog(null, "Username or password is incorrect. Try again.");
             }
         });
 
-        //Pantallas de inicio del juego
-
-        homeScreen.getStartButton().addActionListener(e -> showScreen("Selection"));
+        // Home
         homeScreen.getRankingButton().addActionListener(e -> showScreen("Ranking"));
         homeScreen.getExitButton().addActionListener(e -> {
             int confirm = JOptionPane.showConfirmDialog(
@@ -117,46 +124,26 @@ public class Moonlight {
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE
             );
-
             if (confirm == JOptionPane.YES_OPTION) {
                 System.exit(0);
             }
         });
+        homeScreen.getStartButton().addActionListener(e -> showScreen("Selection"));
 
-        //Pantallas de selección de nivel
-        selectionScreen.getBackButton().addActionListener(e -> showScreen("Home"));
-        gameScreen.startCountdown(
-                () -> {
-                    // onTimeout
-                    showScreen("Home"); // o lógica de perder una vida
-                },
-                () -> {
-                    // onWin
-                    JOptionPane.showMessageDialog(null, "¡Ganaste el nivel!");
-                    gameScreen.stopCountdown();
-                    showScreen("Selection"); // o pasar al siguiente nivel
-                }
-        );
-
-        //Pantallas del ranking
+        // Ranking
         rankingScreen.getBackButton().addActionListener(e -> showScreen("Home"));
 
-        //Pantallas de Juego
-        gameScreen.getBackButton().addActionListener(e -> showScreen("Selection"));
-        selectionScreen.getLevelEasyButton().addActionListener(e -> {
-            difficulty = "Easy";
-            maze.resetPosition();
-            lives = 3; // reset al iniciar nivel
-            startLevel();
-        });
+        // Selection
+        selectionScreen.getBackButton().addActionListener(e -> showScreen("Home"));
     }
 
     public static void startLevel() {
         new InstrucctionsWindow(() -> {
+            gameScreen.refreshUser();
             showScreen("Game");
 
             SwingUtilities.invokeLater(() -> {
-                Component gameComponent = panelMain.getComponent(5);
+                Component gameComponent = panelMain.getComponent(panelMain.getComponentCount() - 1);
                 if (gameComponent instanceof JPanel) {
                     for (Component c : ((JPanel) gameComponent).getComponents()) {
                         if (c instanceof JPanel && c.isFocusable()) {
@@ -170,50 +157,43 @@ public class Moonlight {
                     // onTimeout
                     lives--;
                     score -= 2;
-                    if (score < 0 ) {
-                        score = 0;
-                    }
+                    if (score < 0) score = 0;
 
                     gameScreen.updateLives(lives);
                     gameScreen.updateScore(score);
 
                     if (lives > 0) {
                         JOptionPane.showMessageDialog(null, "¡Perdiste una vida! Vidas restantes: " + lives);
-                        startLevel(); // reinicia nivel
+                        startLevel();
                     } else {
                         JOptionPane.showMessageDialog(null, "¡Game Over! Te has quedado sin vidas.");
-
-                        GameConnection.saveGameResults(difficulty, score, "");
+                        GameConnection.saveGameResults(difficulty, "Loser", score);
 
                         showScreen("Home");
                         lives = 3;
                         score = 0;
-
                         gameScreen.updateLives(lives);
                         gameScreen.updateScore(score);
                     }
                 }, () -> {
-                    // onWin
+                    score = gameScreen.getMaze().getScore();
                     JOptionPane.showMessageDialog(null, "¡Ganaste el nivel!");
+                    GameConnection.saveGameResults(difficulty, "Winner", score);
                     gameScreen.stopCountdown();
-                    showScreen("Selection"); // o avanzar a otro nivel
+                    showScreen("Selection");
                 });
             });
         });
     }
 
-    //Comentario de GitHub
-
-    public static void showScreen(String title){
+    public static void showScreen(String title) {
         cardLayout.show(panelMain, title);
     }
 
     public static void setUIFont() {
-
         try {
             File fontFile = new File("src/Fonts/dogicapixel.ttf");
-
-            Font customFont = createFont(TRUETYPE_FONT, fontFile).deriveFont(16f);  // Tamaño 16
+            Font customFont = createFont(TRUETYPE_FONT, fontFile).deriveFont(16f);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(customFont);
 
@@ -225,7 +205,6 @@ public class Moonlight {
                     UIManager.put(key, customFont);
                 }
             }
-
         } catch (FontFormatException | IOException e) {
             e.printStackTrace();
         }

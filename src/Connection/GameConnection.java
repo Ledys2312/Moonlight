@@ -1,6 +1,7 @@
 package Connection;
 
 import Objects.GameRanking;
+import Objects.SessionManager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -46,7 +47,7 @@ public class GameConnection {
         return rankings;
     }
 
-    public static void saveGameResults(int id_user, int points, int won, int lost) {
+    public static void saveGameResults(String difficulty, String result, int points) {
 
         String sql = "INSERT INTO games (id_user, level_difficulty, result, total_points ) VALUES (?,?,?,?)";
 
@@ -54,15 +55,16 @@ public class GameConnection {
             Connection conn4 = ConnectionManager.getConnection();
             PreparedStatement stm2 = conn4.prepareStatement(sql);
 
+            int id_user = SessionManager.getCurrentUser().getId();
+
             stm2.setInt(1, id_user);
-            stm2.setInt(2, points);
-            stm2.setInt(3, won);
-            stm2.setInt(4, lost);
+            stm2.setString(2, difficulty);
+            stm2.setString(3, result);
+            stm2.setInt(4, points);
 
             stm2.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-
     }
 }

@@ -1,5 +1,8 @@
 package Forms;
 
+import Objects.SessionManager;
+import Objects.User;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -18,6 +21,7 @@ public class GameScreen {
     private int lifesLeft = 3;
     private JLabel scoreLabel;
     private int points;
+    private JLabel userNameLabel;
 
 
     public GameScreen(Maze maze) {
@@ -46,8 +50,13 @@ public class GameScreen {
         Image scaledImage = icon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
         JLabel userIconLabel = new JLabel(new ImageIcon(scaledImage));
 
+        userNameLabel = new JLabel(SessionManager.getCurrentUser().getUsername());
+        userNameLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        userNameLabel.setForeground(Color.WHITE);
+
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         rightPanel.setOpaque(false);
+        rightPanel.add(userNameLabel);
         rightPanel.add(userIconLabel);
 
         scoreLabel = new JLabel("0 Points");
@@ -154,6 +163,12 @@ public class GameScreen {
         return backButton;
     }
 
+    public void refreshUser() {
+        if (userNameLabel != null) {
+            userNameLabel.setText("Usuario: " + SessionManager.getCurrentUser().getUsername());
+        }
+    }
+
     public Runnable getOnWin() {
         return onWin;
     }
@@ -164,5 +179,13 @@ public class GameScreen {
 
     public void setPoints(int points) {
         this.points = points;
+    }
+
+    public Maze getMaze() {
+        return maze;
+    }
+
+    public void setMaze(Maze maze) {
+        this.maze = maze;
     }
 }

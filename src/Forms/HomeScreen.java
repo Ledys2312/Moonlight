@@ -1,5 +1,8 @@
 package Forms;
 
+import Objects.SessionManager;
+import Objects.User;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;

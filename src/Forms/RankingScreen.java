@@ -32,7 +32,7 @@ public class RankingScreen {
 
         rankingPanel.add(rankingLabel, BorderLayout.NORTH);
 
-        String[] columnNames = {"Username", "Total Score", "Win Games", "Lost Games"};
+        String[] columnNames = {"Username", "Total Score", "Lost Games", "Win Games"};
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
         rankingTable = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(rankingTable);

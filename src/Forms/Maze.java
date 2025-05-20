@@ -182,6 +182,14 @@ public class Maze {
         mazePanel.repaint();
     }
 
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
     public JPanel getMazePanel() {
         return mazePanel;
     }
