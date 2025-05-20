@@ -45,4 +45,24 @@ public class GameConnection {
 
         return rankings;
     }
+
+    public static void saveGameResults(int id_user, int points, int won, int lost) {
+
+        String sql = "INSERT INTO games (id_user, level_difficulty, result, total_points ) VALUES (?,?,?,?)";
+
+        try {
+            Connection conn4 = ConnectionManager.getConnection();
+            PreparedStatement stm2 = conn4.prepareStatement(sql);
+
+            stm2.setInt(1, id_user);
+            stm2.setInt(2, points);
+            stm2.setInt(3, won);
+            stm2.setInt(4, lost);
+
+            stm2.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
 }

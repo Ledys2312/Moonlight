@@ -17,6 +17,7 @@ public class GameScreen {
     private JLabel[] lifes;
     private int lifesLeft = 3;
     private JLabel scoreLabel;
+    private int points;
 
 
     public GameScreen(Maze maze) {
@@ -155,5 +156,13 @@ public class GameScreen {
 
     public Runnable getOnWin() {
         return onWin;
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
     }
 }

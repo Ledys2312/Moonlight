@@ -1,6 +1,7 @@
 package Connection;
 
 import Forms.LoginUpScreen;
+import Objects.User;
 
 import javax.swing.*;
 import java.sql.Connection;
@@ -32,7 +33,7 @@ public class LoginConnection {
 
     }
 
-    public static boolean authenticateUser(String username, String password) {
+    public static User authenticateUser(String username, String password) {
         String sql = "SELECT * FROM users WHERE username = ? AND contraseña = ?";
 
         try {
@@ -43,10 +44,20 @@ public class LoginConnection {
 
             ResultSet rs2 = ps2.executeQuery();
 
-            return rs2.next();
+            if (rs2.next()) {
+                int id = rs2.getInt("id_user");
+                String name = rs2.getString("user_name");
+                String surname = rs2.getString("surname");
+                String user = rs2.getString("username");
+                String pass = rs2.getString("contraseña");
+
+                return new User(id, name, surname, user, pass);
+            }
+
+            return null;
         } catch (SQLException e) {
             System.out.println("There was a problem while trying to authenticate the user" + e.getMessage());
-            return false;
+            return null;
         }
 
     }

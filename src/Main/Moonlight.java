@@ -1,7 +1,10 @@
 package Main;
 
+import Connection.GameConnection;
 import Connection.LoginConnection;
 import Forms.*;
+import Objects.SessionManager;
+import Objects.User;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,6 +24,7 @@ public class Moonlight {
     private static GameScreen gameScreen;
     private static int lives = 3;
     private static int score = 0;
+    private static String difficulty = "Easy";
 
     public static void main(String[] args){
 
@@ -91,8 +95,9 @@ public class Moonlight {
                 return;
             }
 
-            boolean success = LoginConnection.authenticateUser(username, password);
-            if (success) {
+            User authenticatedUser = LoginConnection.authenticateUser(username, password);
+            if (authenticatedUser != null) {
+                SessionManager.setCurrentUser(authenticatedUser);
                 JOptionPane.showMessageDialog(null, "Welcome again " + username + " to MoonLight. ");
                 showScreen("Home");
             } else {
@@ -139,6 +144,7 @@ public class Moonlight {
         //Pantallas de Juego
         gameScreen.getBackButton().addActionListener(e -> showScreen("Selection"));
         selectionScreen.getLevelEasyButton().addActionListener(e -> {
+            difficulty = "Easy";
             maze.resetPosition();
             lives = 3; // reset al iniciar nivel
             startLevel();
@@ -176,6 +182,9 @@ public class Moonlight {
                         startLevel(); // reinicia nivel
                     } else {
                         JOptionPane.showMessageDialog(null, "¡Game Over! Te has quedado sin vidas.");
+
+                        GameConnection.saveGameResults(difficulty, score, "");
+
                         showScreen("Home");
                         lives = 3;
                         score = 0;
@@ -192,6 +201,8 @@ public class Moonlight {
             });
         });
     }
+
+    //Comentario de GitHub
 
     public static void showScreen(String title){
         cardLayout.show(panelMain, title);

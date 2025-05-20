@@ -12,7 +12,7 @@ public class Maze {
     private int[][] maze;
     private int playerX = 1;
     private int playerY = 1;
-    private final int sizeCell = 40;
+    private final int sizeCell = 30;
     private final int exitX = 17;
     private final int exitY = 9;
     private static GameScreen gameScreen;
