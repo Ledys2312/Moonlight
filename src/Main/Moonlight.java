@@ -31,7 +31,7 @@ public class Moonlight {
         frame = new JFrame("MoonLight");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 550);
-        frame.setResizable(false);
+//        frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setIconImage(Toolkit.getDefaultToolkit().getImage("src/Img/Icon.png"));
 

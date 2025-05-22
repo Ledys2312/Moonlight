@@ -1,12 +1,13 @@
 package Forms;
 
+import Design.Buttoms;
+import Design.PasswordField;
+import Design.TextField;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
 import static java.awt.Font.TRUETYPE_FONT;
 import static java.awt.Font.createFont;
@@ -14,45 +15,56 @@ import static java.awt.Font.createFont;
 public class LoginUpScreen{
 
     private JPanel signUpPanel;
-    private JTextField nameField;
-    private JTextField surnameField;
-    private JTextField usernameField;
-    private JPasswordField passwordField;
-    private JButton signUpButton;
-    private JButton backButton;
+    private TextField nameField;
+    private TextField surnameField;
+    private TextField usernameField;
+    private PasswordField passwordField;
+    private Buttoms signUpButton;
+    private Buttoms backButton;
 
     public LoginUpScreen() {
 
         signUpPanel = new JPanel(null);
-        nameField = new JTextField();
-        surnameField = new JTextField();
-        usernameField = new JTextField();
-        passwordField = new JPasswordField();
+        signUpPanel.setBackground(new Color(245,230,232));
 
         JLabel lblName = new JLabel("Name");
-        lblName.setBounds(290,200,200,20);
-        nameField.setBounds(290, 230, 200, 20);
+        lblName.setForeground(new Color(3, 14, 40));
+        lblName.setBounds(290,160,200,20);
+        this.nameField = new TextField(20);
+        nameField.setBounds(290, 190, 200, 20);
+
         JLabel lblSurname = new JLabel("Surname");
-        lblSurname.setBounds(290,260,200,20);
-        surnameField.setBounds(290, 290, 200, 20);
+        lblSurname.setForeground(new Color(3, 14, 40));
+        lblSurname.setBounds(290,220,200,20);
+        this.surnameField = new TextField(20);
+        surnameField.setBounds(290, 250, 200, 20);
+
         JLabel lblUsername = new JLabel("Write your username");
-        lblUsername.setBounds(290,320,200,20);
-        usernameField.setBounds(290, 350, 200, 20);
+        lblUsername.setForeground(new Color(3, 14, 40));
+        lblUsername.setBounds(290,280,200,20);
+        this.usernameField = new TextField(20);
+        usernameField.setBounds(290, 310, 200, 20);
+
         JLabel lblPassword = new JLabel("Write your password");
-        lblPassword.setBounds(290,380,200,20);
-        passwordField.setBounds(290, 410, 200, 20);
-        signUpButton = new JButton("Sign Up");
-        signUpButton.setBounds(390, 450, 100, 40);
-        backButton = new JButton("Back");
-        backButton.setBounds(280, 450, 100, 40);
+        lblPassword.setForeground(new Color(3, 14, 40));
+        lblPassword.setBounds(290,340,200,20);
+        this.passwordField = new PasswordField(20);
+        passwordField.setBounds(290, 370, 200, 20);
+
+        this.signUpButton = new Buttoms("Sign Up");
+        signUpButton.setBounds(390, 410, 100, 40);
+
+        this.backButton = new Buttoms("Back");
+        backButton.setBounds(280, 410, 100, 40);
 
         JLabel signUpLabel = new JLabel("Sign Up", SwingConstants.CENTER);
         signUpLabel.setBounds(150,80,500,60);
+        signUpLabel.setForeground(new Color(122,92,134));
 
         try {
             File fontFile = new File("src/Fonts/Rolie Twily.otf");
 
-            Font customFont = createFont(TRUETYPE_FONT, fontFile).deriveFont(35f);  // Tamaño 24
+            Font customFont = createFont(TRUETYPE_FONT, fontFile).deriveFont(45f);  // Tamaño 24
 
             signUpLabel.setFont(customFont);
         } catch (Exception e) {
@@ -96,52 +108,51 @@ public class LoginUpScreen{
         this.signUpPanel = signUpPanel;
     }
 
-    public JTextField getNameField() {
+    public TextField getNameField() {
         return nameField;
     }
 
-    public void setNameField(JTextField nameField) {
+    public void setNameField(TextField nameField) {
         this.nameField = nameField;
     }
 
-    public JTextField getSurnameField() {
+    public TextField getSurnameField() {
         return surnameField;
     }
 
-    public void setSurnameField(JTextField surnameField) {
+    public void setSurnameField(TextField surnameField) {
         this.surnameField = surnameField;
     }
 
-    public JPasswordField getPasswordField() {
-        return passwordField;
-    }
-
-    public void setPasswordField(JPasswordField passwordField) {
-        this.passwordField = passwordField;
-    }
-
-    public JTextField getUsernameField() {
+    public TextField getUsernameField() {
         return usernameField;
     }
 
-    public void setUsernameField(JTextField usernameField) {
+    public void setUsernameField(TextField usernameField) {
         this.usernameField = usernameField;
     }
 
-    public JButton getSignUpButton() {
+    public PasswordField getPasswordField() {
+        return passwordField;
+    }
+
+    public void setPasswordField(PasswordField passwordField) {
+        this.passwordField = passwordField;
+    }
+
+    public Buttoms getSignUpButton() {
         return signUpButton;
     }
 
-    public void setSignUpButton(JButton signUpButton) {
+    public void setSignUpButton(Buttoms signUpButton) {
         this.signUpButton = signUpButton;
     }
 
-    public JButton getBackButton() {
+    public Buttoms getBackButton() {
         return backButton;
     }
 
-    public void setBackButton(JButton backButton) {
+    public void setBackButton(Buttoms backButton) {
         this.backButton = backButton;
     }
-
 }
