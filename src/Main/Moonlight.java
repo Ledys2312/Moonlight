@@ -2,6 +2,7 @@ package Main;
 
 import Connection.GameConnection;
 import Connection.LoginConnection;
+import Design.CustomMessage;
 import Forms.*;
 import Objects.SessionManager;
 import Objects.User;
@@ -74,7 +75,7 @@ public class Moonlight {
 
             boolean success = LoginConnection.registerUser(name, surname, username, password);
             if (success) {
-                JOptionPane.showMessageDialog(null, "Welcome " + name + " to MoonLight.");
+                CustomMessage.showMessage(null,"MoonLight", "Welcome to MoonLight");
                 showScreen("Home");
             } else {
                 JOptionPane.showMessageDialog(null, "Something went wrong.");
@@ -93,7 +94,7 @@ public class Moonlight {
             User authenticatedUser = LoginConnection.authenticateUser(username, password);
             if (authenticatedUser != null) {
                 SessionManager.setCurrentUser(authenticatedUser);
-                JOptionPane.showMessageDialog(null, "Welcome again " + authenticatedUser.getUsername() + " to MoonLight.");
+                CustomMessage.showMessage(null, "MoonLight", "Welcome again " + authenticatedUser.getUsername() + "\n" + "\n to MoonLight");
 
                 Maze maze = new Maze();
                 gameScreen = new GameScreen(maze);

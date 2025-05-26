@@ -1,5 +1,7 @@
 package Forms;
 
+import Design.Buttoms;
+import Design.StarPanel;
 import Objects.SessionManager;
 import Objects.User;
 
@@ -10,21 +12,33 @@ import java.io.File;
 public class HomeScreen {
 
     private JPanel homePanel;
-    private JButton startButton;
-    private JButton exitButton;
-    private JButton rankingButton;
+    private Buttoms startButton;
+    private Buttoms rankingButton;
+    private Buttoms exitButton;
 
     public HomeScreen() {
 
         homePanel = new JPanel(null);
-        startButton = new JButton("Start the Adventure");
-        rankingButton = new JButton("Ranking");
-        exitButton = new JButton("Exit");
 
         homePanel.setPreferredSize(new Dimension(800,550));
+        homePanel.setBackground(new Color(3, 14, 40));
 
-        startButton.setBounds(300,200,300,40);
+        StarPanel starPanel = new StarPanel();
+        starPanel.setBounds(0,0,800,550);
+        starPanel.setOpaque(false);
+        homePanel.add(starPanel);
+        homePanel.setComponentZOrder(starPanel,homePanel.getComponentCount()-1);
+
+        this.startButton = new Buttoms("Start");
+        startButton.setForeground(new Color(245,230,232));
+        startButton.setBounds(300,200,200,40);
+
+        this.rankingButton = new Buttoms("Ranking");
+        rankingButton.setForeground(new Color(245,230,232));
         rankingButton.setBounds(300,250,200,40);
+
+        this.exitButton = new Buttoms("Exit");
+        exitButton.setForeground(new Color(245,230,232));
         exitButton.setBounds(300,300,200,40);
 
         homePanel.add(startButton);
@@ -33,6 +47,7 @@ public class HomeScreen {
 
         JLabel homeLabel = new JLabel("Welcome to MoonLight", SwingConstants.CENTER);
         homeLabel.setBounds(150,100,500,80);
+        homeLabel.setForeground(new Color(245,230,232));
 
         try {
             File fontFile = new File("src/Fonts/Rolie Twily.otf");
@@ -56,27 +71,27 @@ public class HomeScreen {
         this.homePanel = homePanel;
     }
 
-    public JButton getStartButton() {
+    public Buttoms getStartButton() {
         return startButton;
     }
 
-    public void setStartButton(JButton startButton) {
+    public void setStartButton(Buttoms startButton) {
         this.startButton = startButton;
     }
 
-    public JButton getExitButton() {
-        return exitButton;
-    }
-
-    public void setExitButton(JButton exitButton) {
-        this.exitButton = exitButton;
-    }
-
-    public JButton getRankingButton() {
+    public Buttoms getRankingButton() {
         return rankingButton;
     }
 
-    public void setRankingButton(JButton rankingButton) {
+    public void setRankingButton(Buttoms rankingButton) {
         this.rankingButton = rankingButton;
+    }
+
+    public Buttoms getExitButton() {
+        return exitButton;
+    }
+
+    public void setExitButton(Buttoms exitButton) {
+        this.exitButton = exitButton;
     }
 }
